@@ -1,0 +1,13 @@
+minio/data
+minio/data/*
+postgres/pg_admin_data
+postgres/pg_admin_data/*
+postgres/postgres_data
+postgres/postgres_data/*    
+
+n8n_with_FFMPG/data
+n8n_with_FFMPG/data/*
+
+archive/minio_data
+archive/minio_data/*
+

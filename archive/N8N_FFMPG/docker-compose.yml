@@ -1,0 +1,103 @@
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_NON_ROOT_USER: ${POSTGRES_NON_ROOT_USER}
+      POSTGRES_NON_ROOT_PASSWORD: ${POSTGRES_NON_ROOT_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-n8n} -d ${POSTGRES_DB:-n8n}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [app]
+    restart: unless-stopped
+
+  n8n:
+    build: .
+    # Local default: expose 5678
+    container_name: n8n 
+    ports:
+      - "5678:5678"
+    environment:
+      # Database
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: host.docker.internal
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+       # Security & basics
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      GENERIC_TIMEZONE: ${GENERIC_TIMEZONE}
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
+      N8N_RUNNERS_ENABLED: true
+      # Access / URLs (set these if using a reverse proxy or a domain)
+      N8N_HOST: ${N8N_HOST:-localhost}
+      N8N_PORT: 5678
+      N8N_PROTOCOL: ${N8N_PROTOCOL:-http}
+      N8N_EDITOR_BASE_URL: ${WEBHOOK_URL:-}
+      WEBHOOK_URL: ${WEBHOOK_URL:-}
+      # Optional: privacy/telemetry
+      N8N_DIAGNOSTICS_ENABLED: true
+
+      # Cookies secure in prod (set PRODUCTION=true to enable)
+      N8N_SECURE_COOKIE: true
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+     
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks: [app]
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgaadmin
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - "8080:80"
+    volumes:
+      - pg_admin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+  minio:
+    image: quay.io/minio/minio:latest # Note: MinIO no longer publishes to Docker Hub for free
+    container_name: minio
+    ports:
+      - "9000:9000" # S3 API endpoint
+      - "9001:9001" # MinIO Console (web UI)
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER} # Replace with a strong username
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD} # Replace with a strong password (min 8 chars)
+    volumes:
+      - ./minio_data:/data # Mount a local directory to store MinIO data
+    networks: [app]
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+        
+networks:
+  app:
+
+volumes:
+  postgres_data:
+  n8n_data:
+  pg_admin_data:
