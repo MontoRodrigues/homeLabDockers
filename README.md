@@ -12,7 +12,13 @@ The repository is organized by service. Below are the currently available servic
 ```bash
 docker  network  create  homeLab
 ```
-  
+
+### 🗄️ [Cloudflare](./cloudflare/README.md)
+A tunnel to serve your local Docker container over the internet 
+
+-  **Location**: [`/cloudflare`](./cloudflare)
+-  **Key Features**: Expose your local Docker container over the internet.
+
 
 ### 🗄️ [MinIO](./minio/README.md)
 S3-compatible object storage server. Used for storing artifacts, backups, and other unstructured data. 
@@ -34,7 +40,7 @@ Relational database management system bundled with pgAdmin for web-based adminis
 
 ---
 
-## Getting Started
+## Setting up your Home Lab
 
   
 1.  **Clone the repository**:
@@ -47,23 +53,64 @@ Create the network for your home lab so containers and services and talk to each
 ```bash 
 docker  network  create  homeLab
 ```
-
-3.  **Navigate to a service directory**:
-Choose the service you want to start, for example, PostgreSQL:
-
+3.  **Run CloudFlare Container**:
+Navigate to the cloudflare directory, user the [README.MD](./cloudflare/README.md) to setup and run the following command on your terminal to run the cloudflare container:
 ```bash
-cd  postgres
-```
-
-4.  **Start the service**:
-Each directory contains a `docker-compose.yml` file. You can start the service using:
-```bash
+cd  cloudflare
 docker-compose  up  -d
 ```
 
-  
 
-  
+4.  **Install Psotges SQL**:
+Navigate to the postgres directory and run the following command:
+
+```bash
+cd  postgres
+docker-compose  up  -d
+```
+
+6.  **Install MinIO**:
+Navigate to the minio directory and run the following command:
+```bash
+cd  minio
+docker-compose  up  -d
+```
+
+7.  **Install n8n with FFmpeg**:
+Navigate to the n8n_with_FFMPG directory and run the following command:
+```bash
+cd  n8n_with_FFMPG
+docker-compose  up  -d
+```
+
+8.  **Setup application routes in CLoudflare**:
+-  Go to the Cloudflare dashboard and navigate to the **Zero Trust** section.
+-  Click on **Connectors** and then **Tunnels**.
+-  Click on the tunnel you created in step 3.
+- click on **Published application routes** and then click **Add a published application route**. Add the details for each application as mentioned below:
+    - n8n:
+        -   **Subdomain:**  `n8n` (or whatever you like).    
+        -   **Domain:** Select your domain (e.g., `example.com`).    
+        -   **Service Type:**  `HTTP`.    
+        -   **URL:**  `n8n:5678` (This uses the Docker service name defined in your compose file).
+    - pgAdmin:
+        -   **Subdomain:**  `pgadmin` (or whatever you like).    
+        -   **Domain:** Select your domain (e.g., `example.com`).    
+        -   **Service Type:**  `HTTP`.    
+        -   **URL:**  `pgaadmin:80` (This uses the Docker service name defined in your compose file).
+    - minIO:
+        -   **Subdomain:**  `minio` (or whatever you like).    
+        -   **Domain:** Select your domain (e.g., `example.com`).    
+        -   **Service Type:**  `HTTP`.    
+        -   **URL:**  `minio:9000` (This uses the Docker service name defined in your compose file).  
+     - minIO API:
+        -   **Subdomain:**  `minioapi` (or whatever you like).    
+        -   **Domain:** Select your domain (e.g., `example.com`).    
+        -   **Service Type:**  `HTTP`.    
+        -   **URL:**  `minio:9001` (This uses the Docker service name defined in your compose file).               
+-  Navigate to the cloudflare directory and run the following command:
+
+Your home lab is now ready and accessible over the internet.
 
 ## Prerequisites
 - [Docker](https://docs.docker.com/get-docker/) installed on your machine.
