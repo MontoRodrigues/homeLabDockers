@@ -59,7 +59,7 @@ MINIO_PASSWORD=<strong password>
 ## 4. Create Docker Compose file
 - Create the following file at `minio/docker-compose.yml`.
 - copy the below code in the docker-compose.yml file
-```
+```yaml
 services:
 	minio:
 		image: quay.io/minio/aistor/minio:latest
@@ -78,7 +78,7 @@ services:
 
 ## 5. Run Container
 - run the following command in the terminal.
-```
+```bash
 docker-compose up -d
 ```
 
@@ -87,7 +87,7 @@ docker-compose up -d
 
 To verify that the server is running correctly, check the logs:
 
-```
+```bash
 docker logs minio-aistor
 
 ```

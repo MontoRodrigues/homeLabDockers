@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   minio:
     image: quay.io/minio/aistor/minio:latest
@@ -14,3 +12,9 @@ services:
     volumes:
       - ./:/mnt/minio # Mount a local directory to store MinIO dataß
     command: minio server
+    networks:
+      - homeLab
+
+networks:
+  homeLab:
+    external: true

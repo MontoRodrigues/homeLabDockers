@@ -17,6 +17,8 @@ services:
       timeout: 5s
       retries: 5
     shm_size: 128mb
+    networks:
+      - homeLab
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgaadmin
@@ -30,3 +32,9 @@ services:
       - ./pg_admin_data:/var/lib/pgadmin
     depends_on:
       - db
+    networks:
+      - homeLab
+
+networks:
+  homeLab:
+    external: true

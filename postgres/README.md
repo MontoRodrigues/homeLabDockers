@@ -22,7 +22,7 @@ Ensure you have the following installed:
 - The setup uses an `.env` file to manage credentials securely. Ensure your `.env` file is in the root directory:
 - Copy the code snippet
 
-```
+```env
 POSTGRES_USER=<user Name>
 POSTGRES_PASSWORD=<strong Passsword>
 POSTGRES_DB=<default DB>
@@ -34,7 +34,7 @@ PGADMIN_PASSWORD=<strong your_pgadmin_password>
 ### 4. Create the Composer file
 - Create the following file at `docker-compose.yml`.
 - copy the below code in the docker-compose.yml file
-```YML
+```yaml
 services:
 	db:
 		image: postgres:17

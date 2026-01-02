@@ -31,3 +31,9 @@ services:
     volumes:
       - ./data:/home/node/.n8n
     restart: unless-stopped
+    networks:
+      - homeLab
+
+networks:
+  homeLab:
+    external: true

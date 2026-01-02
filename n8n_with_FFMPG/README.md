@@ -27,7 +27,7 @@ mkdir n8n-ffmpeg && cd n8n-ffmpeg
 
 We need to add FFmpeg to the base n8n image. Create a file named `Dockerfile`:
 
-```
+```dockerfile
 FROM docker.n8n.io/n8nio/n8n:latest
 
 USER  root
@@ -49,7 +49,7 @@ USER  node
 
 Create a file named `docker-compose.yml` in the same directory:
 
-```
+```yaml
 services:
 	n8n:
 		build: .

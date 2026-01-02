@@ -12,7 +12,12 @@ Welcome to the Home Lab Docker repository. This project serves as a central hub 
 
 The repository is organized by service. Below are the currently available services with links to their specific documentation:
 
-  
+### 🏠 Network
+- before installing any service, create a network by running the following command:
+
+```bash
+docker network create homeLab
+```
 
 ### 🗄️ [MinIO](./minio/README.md)
 
