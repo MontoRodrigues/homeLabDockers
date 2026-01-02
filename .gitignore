@@ -11,3 +11,6 @@ n8n_with_FFMPG/data/*
 archive/minio_data
 archive/minio_data/*
 
+
+# Ignore all .env files
+**/.env
